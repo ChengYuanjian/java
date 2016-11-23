@@ -1,0 +1,8 @@
+---
+applications:
+- name: storm
+  # Fork of https://github.com/cloudfoundry/java-buildpack
+  # For stability, keep your own fork.
+  buildpack: java-buildpack
+  memory: 512M
+  instances: 1

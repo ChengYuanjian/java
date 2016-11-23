@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.truepaas.log.mapper.AppMapper">
+
+    <resultMap id="applog" type="com.truepaas.log.vo.AppLog">
+        <result column="s_app_id" property="cf_app_id" />
+        <result column="s_app_name" property="cf_app_name" />
+        <result column="s_org_id" property="cf_org_id" />
+        <result column="s_org_name" property="cf_org_name" />
+        <result column="s_space_id" property="cf_space_id" />
+        <result column="s_space_name" property="cf_space_name" />
+        <result column="n_cpu_percentage" property="cpu_percentage" />
+        <result column="n_disk_mbs" property="disk_bytes" />
+        <result column="n_disk_percentage" property="disk_bytes_quota" />
+        <result column="n_mem_mbs" property="memory_bytes" />
+        <result column="n_mem_percentage" property="memory_bytes_quota" />
+        <result column="d_datetime" property="time" />
+    </resultMap>
+
+    <select id="queryAllAppLog"  resultMap="applog" >
+        select * from t_paas_container_log order by d_datetime desc limit 1000;
+    </select>
+
+    <select id="queryAllAppLogByTime" resultMap="applog">
+        select * from t_paas_container_log where d_datetime
+        between #{0} and #{1}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <select id="queryAppLogByAppId"  resultMap="applog" >
+        select * from t_paas_container_log where s_app_id=#{0}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <select id="queryAppLogByAppIdAndTime"  resultMap="applog" >
+        select * from t_paas_container_log where s_app_id=#{0}
+        and d_datetime between #{1} and #{2}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <select id="queryAppLogByAppIdAndTime1"  resultMap="applog" >
+        select * from t_paas_container_log where s_app_id=#{0}
+        and d_datetime between #{1} and #{2}
+        order by d_datetime asc;
+    </select>
+
+    <select id="queryAppLogByOrgId"  resultMap="applog" >
+        select * from t_paas_container_log where s_org_id=#{0}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <select id="queryAppLogByOrgIdAndTime"  resultMap="applog" >
+        select * from t_paas_container_log where s_org_id=#{0}
+        and d_datetime between #{1} and #{2}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <select id="queryAppLogBySpaId"  resultMap="applog" >
+        select * from t_paas_container_log where s_space_id=#{0}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <select id="queryAppLogBySpaIdAndTime"  resultMap="applog" >
+        select * from t_paas_container_log where s_space_id=#{0}
+        and d_datetime between #{1} and #{2}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <!-- num limit-->
+    <select id="queryAllAppLogByNum"  resultMap="applog" >
+        select * from t_paas_container_log
+        order by d_datetime desc
+        limit #{0},#{1};
+    </select>
+
+    <select id="queryAllAppLogByTimeAndNum" resultMap="applog">
+        select * from t_paas_container_log where d_datetime
+        between #{0} and #{1}
+        order by d_datetime desc
+        limit #{2},#{3};
+    </select>
+
+    <select id="queryAppLogByAppIdAndNum"  resultMap="applog" >
+        select * from t_paas_container_log where s_app_id=#{0}
+        order by d_datetime desc
+        limit #{1},#{2};
+    </select>
+
+    <select id="queryAppLogByAppIdAndTimeAndNum"  resultMap="applog" >
+        select * from t_paas_container_log where s_app_id=#{0}
+        and d_datetime between #{1} and #{2}
+        order by d_datetime desc
+        limit #{3},#{4};
+    </select>
+
+    <select id="queryAppLogByOrgIdAndNum"  resultMap="applog" >
+        select * from t_paas_container_log where s_org_id=#{0}
+        order by d_datetime desc
+        limit #{1},#{2};
+    </select>
+
+    <select id="queryAppLogByOrgIdAndTimeAndNum"  resultMap="applog" >
+        select * from t_paas_container_log where s_org_id=#{0}
+        and d_datetime between #{1} and #{2}
+        order by d_datetime desc
+        limit #{3},#{4};
+    </select>
+
+    <select id="queryAppLogBySpaIdAndNum"  resultMap="applog" >
+        select * from t_paas_container_log where s_space_id=#{0}
+        order by d_datetime desc
+        limit #{1},#{2};
+    </select>
+
+    <select id="queryAppLogBySpaIdAndTimeAndNum"  resultMap="applog" >
+        select * from t_paas_container_log where s_space_id=#{0}
+        and d_datetime between #{1} and #{2}
+        order by d_datetime desc
+        limit #{3},#{4};
+    </select>
+
+</mapper>

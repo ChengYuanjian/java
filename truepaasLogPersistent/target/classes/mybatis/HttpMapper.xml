@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.truepaas.log.mapper.HttpMapper">
+
+    <resultMap id="httplog" type="com.truepaas.log.vo.HttpLog">
+        <result column="s_app_id" property="cf_app_id" />
+        <result column="s_app_name" property="cf_app_name" />
+        <result column="s_org_id" property="cf_org_id" />
+        <result column="s_org_name" property="cf_org_name" />
+        <result column="s_space_id" property="cf_space_id" />
+        <result column="s_space_name" property="cf_space_name" />
+        <result column="s_uri" property="uri" />
+        <result column="s_instance_id" property="instance_id" />
+        <result column="s_instance_index" property="instance_index" />
+        <result column="s_ip" property="ip" />
+        <result column="s_usragent" property="user_agent" />
+        <result column="d_datetime" property="time" />
+        <result column="d_starttime" property="start_timestamp" />
+        <result column="d_endtime" property="stop_timestamp" />
+    </resultMap>
+
+    <select id="queryAllHttpLog"  resultMap="httplog" >
+    select * from t_paas_http_log order by d_datetime desc limit 1000;
+</select>
+
+    <select id="queryAllHttpLogByTime"  resultMap="httplog" >
+        select * from t_paas_http_log where d_datetime between #{0} and #{1}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <select id="queryHttpLogByAppId"  resultMap="httplog" >
+        select * from t_paas_http_log where s_app_id=#{0}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <select id="queryHttpLogByAppIdAndTime"  resultMap="httplog" >
+        select * from t_paas_http_log where s_app_id=#{0}
+        and d_datetime between #{1} and #{2}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <select id="queryHttpLogByOrgId"  resultMap="httplog" >
+        select * from t_paas_http_log where s_org_id=#{0}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <select id="queryHttpLogByOrgIdAndTime"  resultMap="httplog" >
+        select * from t_paas_http_log where s_org_id=#{0}
+        and d_datetime between #{1} and #{2}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <select id="queryHttpLogBySpaId"  resultMap="httplog" >
+        select * from t_paas_http_log where s_space_id=#{0}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <select id="queryHttpLogBySpaIdAndTime"  resultMap="httplog" >
+        select * from t_paas_http_log where s_space_id=#{0}
+        and d_datetime between #{1} and #{2}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <!-- num limit-->
+    <select id="queryAllHttpLogByNum"  resultMap="httplog" >
+        select * from t_paas_http_log order by d_datetime desc limit #{0},#{1};
+    </select>
+
+    <select id="queryAllHttpLogByTimeAndNum"  resultMap="httplog" >
+        select * from t_paas_http_log where d_datetime between #{0} and #{1}
+        order by d_datetime desc
+        limit #{2},#{3};
+    </select>
+
+    <select id="queryHttpLogByAppIdAndNum"  resultMap="httplog" >
+        select * from t_paas_http_log where s_app_id=#{0}
+        order by d_datetime desc
+        limit #{1},#{2};
+    </select>
+
+    <select id="queryHttpLogByAppIdAndTimeAndNum"  resultMap="httplog" >
+        select * from t_paas_http_log where s_app_id=#{0}
+        and d_datetime between #{1} and #{2}
+        order by d_datetime desc
+        limit #{3},#{4};
+    </select>
+
+    <select id="queryHttpLogByOrgIdAndNum"  resultMap="httplog" >
+        select * from t_paas_http_log where s_org_id=#{0}
+        order by d_datetime desc
+        limit #{1},#{2};
+    </select>
+
+    <select id="queryHttpLogByOrgIdAndTimeAndNum"  resultMap="httplog" >
+        select * from t_paas_http_log where s_org_id=#{0}
+        and d_datetime between #{1} and #{2}
+        order by d_datetime desc
+        limit #{3},#{4};
+    </select>
+
+    <select id="queryHttpLogBySpaIdAndNum"  resultMap="httplog" >
+        select * from t_paas_http_log where s_space_id=#{0}
+        order by d_datetime desc
+        limit #{1},#{2};
+    </select>
+
+    <select id="queryHttpLogBySpaIdAndTimeAndNum"  resultMap="httplog" >
+        select * from t_paas_http_log where s_space_id=#{0}
+        and d_datetime between #{1} and #{2}
+        order by d_datetime desc
+        limit #{3},#{4};
+    </select>
+
+</mapper>

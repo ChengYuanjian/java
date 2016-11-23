@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.truepaas.log.mapper.CountMapper">
+
+    <resultMap id="countlog" type="com.truepaas.log.vo.CountLog">
+        <result column="s_app_id" property="cf_app_id" />
+        <result column="s_app_name" property="cf_app_name" />
+        <result column="s_org_id" property="cf_org_id" />
+        <result column="s_space_id" property="cf_space_id" />
+        <result column="s_indicator" property="indicator" />
+        <result column="s_indicator_value" property="indicator_value" />
+        <result column="s_indicator_desc" property="indicator_desc" />
+        <result column="d_datetime" property="time" />
+    </resultMap>
+
+    <resultMap id="countlog1" type="com.truepaas.log.vo.CountLog">
+        <result column="value" property="indicator_value" />
+        <result column="time" property="time" />
+    </resultMap>
+
+    <select id="queryAllCountLog"  resultMap="countlog" >
+        select * from t_paas_http_statistics order by d_datetime desc limit 1000;
+    </select>
+
+    <select id="queryCountLogByIndicator"  resultMap="countlog" >
+        select * from t_paas_http_statistics where s_indicator=#{0}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <select id="queryAllCountLogByTime"  resultMap="countlog" >
+        select * from t_paas_http_statistics where d_datetime
+        between #{0} and #{1}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <select id="queryCountLogByIndicatorAndTime"  resultMap="countlog" >
+        select * from t_paas_http_statistics where s_indicator=#{0}
+        and d_datetime between #{1} and #{2}
+        order by d_datetime desc
+        limit 1000;
+    </select>
+
+    <!--num limit-->
+    <select id="queryAllCountLogByNum"  resultMap="countlog" >
+        select * from t_paas_http_statistics
+        order by d_datetime desc
+        limit #{0},#{1};
+    </select>
+
+    <select id="queryCountLogByIndicatorAndNum"  resultMap="countlog" >
+        select * from t_paas_http_statistics where s_indicator=#{0}
+        order by d_datetime desc
+        limit #{1},#{2};
+    </select>
+
+    <select id="queryAllCountLogByTimeAndNum"  resultMap="countlog" >
+        select * from t_paas_http_statistics where d_datetime
+        between #{0} and #{1}
+        order by d_datetime desc
+        limit #{2},#{3};
+    </select>
+
+    <select id="queryCountLogByIndicatorAndTimeAndNum"  resultMap="countlog" >
+        select * from t_paas_http_statistics where s_indicator=#{0}
+        and d_datetime between #{1} and #{2}
+        order by d_datetime desc
+        limit #{3},#{4};
+    </select>
+
+    <!--/*累计访问次数*/-->
+    <select id="getTotalAccessTimes" resultType="java.lang.String">
+        select sum(t.s_indicator_value)
+        from (select distinct s_app_id,s_indicator,
+        s_indicator_value,s_indicator_desc,d_datetime
+        from t_paas_http_statistics
+        where s_indicator='app count'
+        and s_app_id &lt;&gt;''
+        and s_indicator_value &lt;&gt;'') t;
+    </select>
+
+    <!--/*最近30天访问次数*/-->
+    <select id="getMonthAccessTimes" resultMap="countlog1">
+        select sum(t.s_indicator_value) value , t.time time
+        from (select distinct s_app_id,s_indicator,s_indicator_value,s_indicator_desc,DATE_FORMAT(d_datetime,'%Y-%c-%d') time
+        from t_paas_http_statistics
+        where s_indicator='app count'
+        and s_app_id &lt;&gt;''
+        and s_indicator_value &lt;&gt;'') t
+        where TO_DAYS(now())- TO_DAYS(t.time) &lt; 30
+        group by t.time
+    </select>
+
+    <!--/*累计访问人数*/-->
+    <select id="getTotalAccessIps" resultType="java.lang.String">
+        select count(*)
+        from (select distinct s_indicator_desc
+        from t_paas_http_statistics
+        where s_indicator='access count'
+        and s_app_id &lt;&gt;''
+        and s_indicator_value &lt;&gt;'') t;
+    </select>
+
+    <!--/*平均响应时长*/-->
+    <select id="getAvgAccessDuration" resultType="java.lang.String">
+        select round(avg(t.s_indicator_value))
+        from (select distinct s_app_id,s_indicator,s_indicator_value,s_indicator_desc,d_datetime
+        from t_paas_http_statistics
+        where s_indicator='url time'
+        and s_app_id &lt;&gt;''
+        and s_indicator_value &lt;&gt;'') t;
+    </select>
+
+    <!--/*平均负载cpu*/-->
+    <select id="getAvgCpu" resultType="java.lang.String">
+        select round(avg(t.s_indicator_value),2)
+        from (select distinct s_app_id,s_indicator,s_indicator_value,s_indicator_desc,d_datetime
+        from t_paas_http_statistics
+        where s_indicator='cpu count'
+        and s_app_id &lt;&gt;''
+        and s_indicator_value &lt;&gt;'') t;
+    </select>
+
+    <!--/*平均负载mem*/-->
+    <select id="getAvgMem" resultType="java.lang.String">
+        select round(avg(t.s_indicator_value),2)
+        from (select distinct s_app_id,s_indicator,s_indicator_value,s_indicator_desc,d_datetime
+        from t_paas_http_statistics
+        where s_indicator='mem count'
+        and s_app_id &lt;&gt;''
+        and s_indicator_value &lt;&gt;'') t;
+    </select>
+
+    <!--/*平均负载disk*/-->
+    <select id="getAvgDisk" resultType="java.lang.String">
+        select round(avg(t.s_indicator_value),2)
+        from (select distinct s_app_id,s_indicator,s_indicator_value,s_indicator_desc,d_datetime
+        from t_paas_http_statistics
+        where s_indicator='disk count'
+        and s_app_id &lt;&gt;''
+        and s_indicator_value &lt;&gt;'') t;
+    </select>
+
+</mapper>

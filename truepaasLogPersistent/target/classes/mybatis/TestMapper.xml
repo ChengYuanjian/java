@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.truepaas.log.persistent.mapper.TestMapper">
+
+    <resultMap id="applog" type="com.truepaas.log.persistent.vo.AppLog">
+        <!--<id column="dp_id" property="dp_id" />-->
+        <result column="s_app_id" property="cf_app_id" />
+        <result column="s_app_name" property="cf_app_name" />
+    </resultMap>
+
+    <select id="queryAllAppLog"  resultMap="applog" >
+        select * from t_paas_container_log;
+    </select>
+
+    <insert id="addTestInfo" parameterType="com.truepaas.log.persistent.vo.Test" useGeneratedKeys="true" keyProperty="id">
+        insert into test(name) values (#{name});
+    </insert >
+
+    <insert  id="addAppLog" parameterType="com.truepaas.log.persistent.vo.AppLog">
+        insert into t_paas_container_log(s_app_id,s_app_name,s_org_id,
+                                                s_org_name,s_space_id,s_space_name,n_cpu_percentage,
+                                                n_disk_mbs,n_mem_mbs,d_datetime)
+        values (#{cf_app_id},#{cf_app_name},#{cf_org_id},
+                #{cf_org_name},#{cf_space_id},#{cf_space_name},
+                #{cpu_percentage},
+                #{disk_bytes},
+                #{memory_bytes},
+                date_format(#{time},'%Y-%c-%d %H:%i:%s'));
+    </insert >
+
+    <insert  id="addHttpLog" parameterType="com.truepaas.log.persistent.vo.HttpLog">
+        insert into t_paas_http_log(s_app_id,s_app_name,s_org_id,
+                                            s_org_name,s_space_id,s_space_name,
+                                            s_uri,s_instance_id,N_instance_index,s_ip,
+                                            s_usragent,d_starttime,d_endtime,d_datetime)
+        values (#{cf_app_id},#{cf_app_name},#{cf_org_id},
+                #{cf_org_name},#{cf_space_id},#{cf_space_name},
+                #{uri},#{instance_id},#{instance_index},
+                #{ip},#{user_agent},
+                #{start_timestamp},
+                #{stop_timestamp},
+                date_format(#{time},'%Y-%c-%d %H:%i:%s'));
+    </insert >
+
+    <insert  id="addOperLog" parameterType="com.truepaas.log.persistent.vo.OperLog">
+        insert into t_paas_oper_log(s_app_id,s_app_name,s_org_id,
+        s_org_name,s_space_id,s_space_name,s_msg,d_datetime)
+        values (#{cf_app_id},#{cf_app_name},#{cf_org_id},
+        #{cf_org_name},#{cf_space_id},#{cf_space_name},
+        #{msg},date_format(#{time},'%Y-%c-%d %H:%i:%s'));
+    </insert >
+
+    <insert id="addErrorLog" parameterType="com.truepaas.log.persistent.vo.HttpLog">
+        insert into t_paas_http_statistics(s_app_id,s_app_name,s_org_id,
+        s_space_id,s_indicator,s_indicator_desc,s_indicator_value,d_datetime)
+        values (#{cf_app_id},#{cf_app_name},#{cf_org_id},
+        #{cf_space_id},
+        'error',
+        #{uri},
+        #{status_code},
+        date_format(#{time},'%Y-%c-%d %H'));
+    </insert>
+
+    <insert  id="addAppCountLog" parameterType="com.truepaas.log.persistent.vo.HttpLog">
+        insert into t_paas_http_statistics(s_app_id,s_app_name,s_org_id,
+        s_space_id,s_indicator,d_datetime)
+        values (#{cf_app_id},#{cf_app_name},#{cf_org_id},
+        #{cf_space_id},
+        'app count',
+        date_format(#{time},'%Y-%c-%d %H'));
+    </insert >
+
+    <insert  id="addUrlCountLog" parameterType="com.truepaas.log.persistent.vo.HttpLog">
+        insert into t_paas_http_statistics(s_app_id,s_app_name,s_org_id,
+        s_space_id,s_indicator,s_indicator_desc,d_datetime)
+        values (#{cf_app_id},#{cf_app_name},#{cf_org_id},
+        #{cf_space_id},
+        'url count',
+        #{uri},
+        date_format(#{time},'%Y-%c-%d %H'));
+    </insert >
+
+    <insert  id="addUrlTimeLog" parameterType="com.truepaas.log.persistent.vo.HttpLog">
+        insert into t_paas_http_statistics(s_app_id,s_app_name,s_org_id,
+        s_space_id,s_indicator,s_indicator_desc,d_datetime)
+        values (#{cf_app_id},#{cf_app_name},#{cf_org_id},
+        #{cf_space_id},
+        'url time',
+        #{uri},
+        date_format(#{time},'%Y-%c-%d %H'));
+    </insert >
+
+    <insert  id="addIPCountLog" parameterType="com.truepaas.log.persistent.vo.HttpLog">
+        insert into t_paas_http_statistics(s_app_id,s_app_name,s_org_id,
+        s_space_id,s_indicator,s_indicator_desc,d_datetime)
+        values (#{cf_app_id},#{cf_app_name},#{cf_org_id},
+        #{cf_space_id},
+        'ip count',
+        #{area},
+        date_format(#{time},'%Y-%c-%d %H'));
+    </insert >
+
+    <update  id="updateAppCountLog" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+         update t_paas_http_statistics
+            <set>s_indicator_value=#{item.value}</set>
+            where s_app_id = #{item.id}
+            and d_datetime= #{item.time}
+            and s_indicator='app count'
+        </foreach>
+    </update >
+
+    <update  id="updateAppCountLog1" parameterType="com.truepaas.log.persistent.vo.TimeCount">
+        update t_paas_http_statistics
+        set s_indicator_value=#{value}
+        where s_app_id = #{id}
+    </update>
+
+    <update  id="updateUrlCountLog" parameterType="java.util.List">
+    <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+        update t_paas_http_statistics
+        <set>s_indicator_value=#{item.value}</set>
+        where s_indicator_desc = #{item.id}
+        and d_datetime= #{item.time}
+        and s_indicator='url count'
+    </foreach>
+    </update >
+
+    <update  id="updateUrlTimeLog" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update t_paas_http_statistics
+            <set>s_indicator_value=#{item.value}</set>
+            where s_indicator_desc = #{item.id}
+            and d_datetime= #{item.time}
+            and s_indicator='url time'
+        </foreach>
+    </update >
+
+    <update  id="updateIPCountLog" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update t_paas_http_statistics
+            <set>s_indicator_value=#{item.value}</set>
+            where s_indicator_desc = #{item.id}
+            and d_datetime= #{item.time}
+            and s_indicator='ip count'
+        </foreach>
+    </update >
+
+</mapper>
